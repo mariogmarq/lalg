@@ -32,6 +32,11 @@ lalg.multiply_vector.restype = ctypes.POINTER(c_array)
 lalg.multiply_vector.argtypes = [ctypes.POINTER(c_array), ctypes.POINTER(c_array)]
 lalg.sum_array_elements.restype = ctypes.c_float
 lalg.sum_array_elements.argtypes = [ctypes.POINTER(c_array)]
+lalg.arange.restype = ctypes.POINTER(c_array)
+lalg.arange.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int]
+lalg.create_rand.argtypes = [ctypes.POINTER(ctypes.c_int), ctypes.c_int]
+lalg.create_rand.restype = ctypes.POINTER(c_array)
+
 
 class Ops(Enum):
     add_scalar = auto()
@@ -90,6 +95,17 @@ class Tensor:
         lalg.fill_array(t._array, 1.0)
         return t
         
+    @staticmethod
+    def arange(start, stop, step):
+        arr = lalg.arange(start, stop, step)
+        shape = [arr[0].shape[i] for i in range(arr[0].n_dims)]
+        return Tensor(shape, arr)
+
+    @staticmethod
+    def rand(shape):
+        c_shape = (ctypes.c_int * len(shape))(*shape)
+        arr = lalg.create_rand(c_shape, len(shape))
+        return Tensor(shape, arr)
     
     def __del__(self):
         lalg.cleanup_array(self._array)

@@ -201,3 +201,26 @@ Array* stack_arrays(Array** arrs, int n_arrs)
 
     return result;
 }
+
+Array* arange(int start, int end, int step)
+{
+    int n = (end - start) / step;
+    Array* result = create_array((int[]){n}, 1);
+    for (int i = 0; i < n; i++)
+    {
+        result->data[i] = (float)(start + i * step);
+    }
+
+    return result;
+}
+
+Array *create_rand(int *shape, int n_dims)
+{
+    Array *arr = create_array(shape, n_dims);
+    for (int i = 0; i < arr->size; i++)
+    {
+        arr->data[i] = (float)rand() / RAND_MAX;
+    }
+
+    return arr;
+}
